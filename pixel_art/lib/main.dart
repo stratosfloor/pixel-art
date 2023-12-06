@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pixel_art/views/pixelart.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,12 +11,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Pixel Artzzzzz',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
         useMaterial3: true,
       ),
-      home: const Placeholder(),
+      home: const PixelArt(),
     );
   }
 }
