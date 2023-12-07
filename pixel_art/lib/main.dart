@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pixel_art/views/pixelart.dart';
+import 'package:pixel_art/views/pixelart_list.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
         useMaterial3: true,
       ),
-      home: const PixelArt(),
+      home: const PixelArtList(),
     );
   }
 }
