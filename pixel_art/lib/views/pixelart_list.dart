@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pixel_art/views/pixelart_canvas.dart';
 import 'package:pixel_art/widgets/color_picker.dart';
+import 'package:pixel_art/widgets/create_pixelart_modal.dart';
 import 'package:pixel_art/widgets/pixel_art_grid.dart';
 import 'package:pixelart_client/pixelart_client.dart';
 import 'package:pixelart_shared/pixelart_shared.dart';
@@ -30,6 +31,47 @@ class _PixelArtListState extends State<PixelArtList> {
   @override
   Widget build(BuildContext context) {
     var listFuture = repository.list();
+
+    void updateList() {
+      listFuture = repository.list();
+      setState(() {});
+    }
+
+    // TODO: Delete pixelart does not work
+    void deletePixelart(String id) async {
+      await repository.delete(id);
+      updateList();
+    }
+
+    void createPixelart(PixelArt pixelart) async {
+      await repository.create(pixelart);
+      updateList();
+    }
+
+    void handleDelete(String id) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Confirm delte pixelart'),
+            actionsAlignment: MainAxisAlignment.end,
+            actions: [
+              TextButton(
+                onPressed: Navigator.of(context).pop,
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  deletePixelart(id);
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Ok'),
+              ),
+            ],
+          );
+        },
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -75,9 +117,15 @@ class _PixelArtListState extends State<PixelArtList> {
                                     border: Border.all(color: Colors.black)),
                                 child: ListTile(
                                   // Navigate to canvas for pixelart
+                                  key: UniqueKey(),
                                   onTap: () => goToCanvas(pixelart),
                                   title: Text(pixelart.name),
-                                  subtitle: Text(pixelart.description),
+                                  subtitle: Text(pixelart.id),
+                                  trailing: IconButton(
+                                      onPressed: () {
+                                        handleDelete(pixelart.id);
+                                      },
+                                      icon: const Icon(Icons.delete)),
                                 ),
                               );
                             }
@@ -93,8 +141,13 @@ class _PixelArtListState extends State<PixelArtList> {
         ),
       ),
       floatingActionButton: FloatingActionButton.large(
+        onPressed: () async => showModalBottomSheet(
+            useSafeArea: true,
+            context: context,
+            builder: (BuildContext context) {
+              return CreatePixelModal(createPixelart: createPixelart);
+            }),
         child: const Icon(Icons.add),
-        onPressed: () {},
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
     );
