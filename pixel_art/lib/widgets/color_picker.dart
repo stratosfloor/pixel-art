@@ -36,7 +36,11 @@ const colors = <Color>[
 ];
 
 class ColorPicker extends StatelessWidget {
-  const ColorPicker({super.key});
+  const ColorPicker(
+      {super.key, required this.selectedColor, required this.selectColor});
+
+  final Color selectedColor;
+  final void Function(Color color) selectColor;
 
   @override
   Widget build(BuildContext context) {
@@ -47,17 +51,28 @@ class ColorPicker extends StatelessWidget {
           runSpacing: 8,
           children: <Widget>[
             for (var i = 0; i < colors.length; i++)
-              Container(
-                height: 64,
-                width: 64,
-                margin: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: colors[i],
-                  border: Border.all(width: 2),
-                ),
-                child: Center(
-                  child: Text(
-                    colors[i].toString().substring(10, 16),
+              GestureDetector(
+                onTap: () => selectColor(colors[i]),
+                child: Container(
+                  height: 64,
+                  width: 64,
+                  margin: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: colors[i],
+                    border: selectedColor == colors[i]
+                        ? Border.all(
+                            width: 4,
+                            color: Colors.black,
+                          )
+                        : Border.all(
+                            width: 2,
+                            color: Colors.grey,
+                          ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      colors[i].toString().substring(10, 16),
+                    ),
                   ),
                 ),
               )
