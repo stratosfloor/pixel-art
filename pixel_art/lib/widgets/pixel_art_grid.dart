@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:pixelart_client/pixelart_client.dart';
 import 'package:pixelart_shared/pixelart_shared.dart';
@@ -22,10 +24,19 @@ class _PixelArtGridState extends State<PixelArtGrid> {
   late List<List<Pixel>> matrix;
   final repository =
       const HTTPPixelArtRepository(url: "localhost:8080/pixelart");
+  late Stream<PixelArt?> stream;
+
+  void initStream() async {
+    stream = await repository.changes(widget.pixelart.id);
+    print('Stream init');
+  }
 
   @override
   void initState() {
+    initStream();
+
     super.initState();
+
     widget.pixelart.pixelMatrix[0].isEmpty
         ? matrix = List.generate(
             widget.pixelart.height,
@@ -54,7 +65,21 @@ class _PixelArtGridState extends State<PixelArtGrid> {
 
   @override
   Widget build(BuildContext context) {
-    int getIndexI(int index, PixelArt pixelart) {
+    final streamsss = Stream.fromFuture(repository.changes(widget.pixelart.id))
+        .listen((event) {});
+
+    // StreamBuilder(
+    //   stream: stream,
+    //   builder: (context, snapshot) {
+    //     print(snapshot.data!.name);
+    //     if (snapshot.hasData) {
+    //       return Text(snapshot.data!.name);
+    //     }
+    //     return Text('data');
+    //   },
+    // );
+
+    getIndexI(int index, PixelArt pixelart) {
       return (index / pixelart.width).floor();
     }
 
