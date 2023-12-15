@@ -25,7 +25,6 @@ class _PixelArtCanvasState extends State<PixelArtCanvas> {
     });
   }
 
-  // TODO: Fix repo and strema
   final repository =
       const HTTPPixelArtRepository(url: "localhost:8080/pixelart");
 
@@ -45,11 +44,16 @@ class _PixelArtCanvasState extends State<PixelArtCanvas> {
         padding: const EdgeInsets.all(8),
         child: Column(
           children: [
-            Text(widget.pixelart.name),
+            Text(
+              widget.pixelart.name,
+              style: Theme.of(context).textTheme.displayMedium,
+            ),
             ColorPicker(
                 selectedColor: _selectedColor, selectColor: selectColor),
-            const Text('data'),
-            const PixelArtGrid(),
+            PixelArtGrid(
+              pixelart: widget.pixelart,
+              selectedColor: _selectedColor,
+            ),
           ],
         ),
       ),

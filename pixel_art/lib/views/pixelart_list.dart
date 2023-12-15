@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pixel_art/views/pixelart_canvas.dart';
-import 'package:pixel_art/widgets/color_picker.dart';
 import 'package:pixel_art/widgets/create_pixelart_modal.dart';
-import 'package:pixel_art/widgets/pixel_art_grid.dart';
 import 'package:pixelart_client/pixelart_client.dart';
 import 'package:pixelart_shared/pixelart_shared.dart';
 
@@ -37,7 +35,6 @@ class _PixelArtListState extends State<PixelArtList> {
       setState(() {});
     }
 
-    // TODO: Delete pixelart does not work
     void deletePixelart(String id) async {
       await repository.delete(id);
       updateList();
