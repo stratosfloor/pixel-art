@@ -18,6 +18,7 @@ class PixelArtCanvas extends StatefulWidget {
 
 class _PixelArtCanvasState extends State<PixelArtCanvas> {
   var _selectedColor = const Color(0xFFffa800);
+  String _participant = '';
 
   void selectColor(Color color) {
     setState(() {
@@ -50,9 +51,20 @@ class _PixelArtCanvasState extends State<PixelArtCanvas> {
             ),
             ColorPicker(
                 selectedColor: _selectedColor, selectColor: selectColor),
+            const SizedBox(height: 8),
+            TextField(
+              onChanged: (value) {
+                _participant = value;
+              },
+              autocorrect: false,
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(), labelText: 'Name'),
+            ),
+            const SizedBox(height: 8),
             PixelArtGrid(
               pixelart: widget.pixelart,
               selectedColor: _selectedColor,
+              participant: _participant,
             ),
           ],
         ),
