@@ -14,25 +14,31 @@ class PixelArtList extends StatefulWidget {
 class _PixelArtListState extends State<PixelArtList> {
   final repository =
       const HTTPPixelArtRepository(url: "localhost:8080/pixelart");
+  late Future<CRUDResult<List<PixelArt>>> listFuture;
 
-  void goToCanvas(PixelArt pixelart) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => PixelArtCanvas(
-          pixelart: pixelart,
-        ),
-      ),
-    );
+  @override
+  void initState() {
+    listFuture = repository.list();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    var listFuture = repository.list();
-
     void updateList() {
       listFuture = repository.list();
       setState(() {});
+    }
+
+    void goToCanvas(PixelArt pixelart) async {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PixelArtCanvas(
+            pixelart: pixelart,
+          ),
+        ),
+      );
+      updateList();
     }
 
     void deletePixelart(String id) async {
@@ -115,9 +121,11 @@ class _PixelArtListState extends State<PixelArtList> {
                                 child: ListTile(
                                   // Navigate to canvas for pixelart
                                   key: UniqueKey(),
-                                  onTap: () => goToCanvas(pixelart),
+                                  onTap: () {
+                                    goToCanvas(pixelart);
+                                  },
                                   title: Text(pixelart.name),
-                                  subtitle: Text(pixelart.id),
+                                  subtitle: Text(pixelart.description),
                                   trailing: IconButton(
                                       onPressed: () {
                                         handleDelete(pixelart.id);
@@ -146,7 +154,6 @@ class _PixelArtListState extends State<PixelArtList> {
             }),
         child: const Icon(Icons.add),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
     );
   }
 }
