@@ -65,6 +65,7 @@ class CreatePixelModal extends StatelessWidget {
                     ),
                   ),
                 ),
+                const SizedBox(height: 10),
                 TextField(
                   controller: _widthController,
                   decoration: InputDecoration(
@@ -74,6 +75,7 @@ class CreatePixelModal extends StatelessWidget {
                     ),
                   ),
                 ),
+                const SizedBox(height: 10),
                 TextField(
                   controller: _heightController,
                   decoration: InputDecoration(
@@ -83,7 +85,6 @@ class CreatePixelModal extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 10),
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -98,7 +99,7 @@ class CreatePixelModal extends StatelessWidget {
                         createPixelart(newPixelArt());
                         Navigator.pop(context);
                       },
-                      child: const Text('Create Exercise'),
+                      child: const Text('Create PixelArt'),
                     ),
                   ],
                 ),
