@@ -25,11 +25,12 @@ class _PixelArtGridState extends State<PixelArtGrid> {
   final repository =
       const HTTPPixelArtRepository(url: "localhost:8080/pixelart");
   late Stream<PixelArt?> _stream;
-  late StreamSubscription<PixelArt?> _subsciption;
+  late StreamSubscription<PixelArt?> _subscription;
 
   void initStream() async {
     _stream = await repository.changes(widget.pixelart.id);
-    _subsciption = _stream.listen((event) {
+    _subscription = _stream.listen((event) {
+      if (!mounted) return;
       setState(() {
         matrix = event!.pixelMatrix;
       });
@@ -39,10 +40,11 @@ class _PixelArtGridState extends State<PixelArtGrid> {
   @override
   void initState() {
     initStream();
+
     super.initState();
 
-    // If pixelart is empty, fill with grey
-    // if pixelart is not empty, draw pixelart
+    // Draw pixelart
+    // If empty, generate all grey pixelart;
     widget.pixelart.pixelMatrix[0].isEmpty
         ? matrix = List.generate(
             widget.pixelart.height,
@@ -67,7 +69,7 @@ class _PixelArtGridState extends State<PixelArtGrid> {
   @override
   void dispose() {
     super.dispose();
-    _subsciption.cancel();
+    _subscription.cancel();
   }
 
   @override
