@@ -24,19 +24,25 @@ class _PixelArtGridState extends State<PixelArtGrid> {
   late List<List<Pixel>> matrix;
   final repository =
       const HTTPPixelArtRepository(url: "localhost:8080/pixelart");
-  late Stream<PixelArt?> stream;
+  late Stream<PixelArt?> _stream;
+  late StreamSubscription<PixelArt?> _subsciption;
 
   void initStream() async {
-    stream = await repository.changes(widget.pixelart.id);
-    print('Stream init');
+    _stream = await repository.changes(widget.pixelart.id);
+    _subsciption = _stream.listen((event) {
+      setState(() {
+        matrix = event!.pixelMatrix;
+      });
+    });
   }
 
   @override
   void initState() {
     initStream();
-
     super.initState();
 
+    // If pixelart is empty, fill with grey
+    // if pixelart is not empty, draw pixelart
     widget.pixelart.pixelMatrix[0].isEmpty
         ? matrix = List.generate(
             widget.pixelart.height,
@@ -61,24 +67,11 @@ class _PixelArtGridState extends State<PixelArtGrid> {
   @override
   void dispose() {
     super.dispose();
+    _subsciption.cancel();
   }
 
   @override
   Widget build(BuildContext context) {
-    final streamsss = Stream.fromFuture(repository.changes(widget.pixelart.id))
-        .listen((event) {});
-
-    // StreamBuilder(
-    //   stream: stream,
-    //   builder: (context, snapshot) {
-    //     print(snapshot.data!.name);
-    //     if (snapshot.hasData) {
-    //       return Text(snapshot.data!.name);
-    //     }
-    //     return Text('data');
-    //   },
-    // );
-
     getIndexI(int index, PixelArt pixelart) {
       return (index / pixelart.width).floor();
     }
@@ -104,15 +97,13 @@ class _PixelArtGridState extends State<PixelArtGrid> {
 
     void changeColor(int index) {
       matrix[getIndexI(index, widget.pixelart)]
-              [getIndexJ(index, widget.pixelart)] =
-          Pixel(
-              red: widget.selectedColor.red,
-              green: widget.selectedColor.green,
-              blue: widget.selectedColor.blue,
-              alpha: widget.selectedColor.alpha,
-              placedBy: Participant(
-                  id: widget.participant, name: widget.participant));
-      setState(() {});
+          [getIndexJ(index, widget.pixelart)] = Pixel(
+        red: widget.selectedColor.red,
+        green: widget.selectedColor.green,
+        blue: widget.selectedColor.blue,
+        alpha: widget.selectedColor.alpha,
+        placedBy: Participant(id: widget.participant, name: widget.participant),
+      );
     }
 
     return Expanded(
@@ -131,8 +122,9 @@ class _PixelArtGridState extends State<PixelArtGrid> {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                    title: Text(
-                        'Pixel created by: ${getPixel(index, widget.pixelart).placedBy.name}')),
+                  title: Text(
+                      'Pixel created by: ${getPixel(index, widget.pixelart).placedBy.name}'),
+                ),
               );
             },
             child: Container(
